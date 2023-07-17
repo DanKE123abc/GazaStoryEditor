@@ -2,10 +2,10 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/GazaStoryEditor/.idea/
-/GazaStoryEditor/Assets/Dewity
-/GazaStoryEditor/Assets/xNode
-/GazaStoryEditor/Assets/Plugins
+/.idea/
+/Assets/Dewity/
+/Assets/xNode/
+/Assets/Plugins/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
