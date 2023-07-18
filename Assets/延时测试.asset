@@ -289,7 +289,7 @@ MonoBehaviour:
       _connectionType: 0
       _typeConstraint: 0
       _dynamic: 0
-  time: 3000
+  time: 3
   pre: 
   nextType: 1
   nextDialogue: {fileID: 0}

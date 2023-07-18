@@ -10,7 +10,7 @@ namespace Gaza
 	[NodeTint(153, 153, 0)]
 	public class DelayTimeNode : Node
 	{
-		[LabelText("延时(单位:ms)")] public int time;
+		[LabelText("延时(单位:s)")] public float time;
 
 		[Input(ShowBackingValue.Never), LabelText("<<<")]
 		public string pre;

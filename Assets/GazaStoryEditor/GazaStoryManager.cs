@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Threading;
 using Dewity;
 using Sirenix.OdinInspector;
+using UnityEngine.SceneManagement;
 using XNode;
+using SceneManager = Dewity.SceneManager;
 
 namespace Gaza
 {
@@ -34,14 +36,14 @@ namespace Gaza
         {
             if (!dialogueLock)
             {
-                PlayDialogue();
+                PlayStory();
             }
         }
 
         /// <summary>
-        /// 对话锁
+        /// 故事锁
         /// </summary>
-        public void SetDialogueLock(bool Lock)
+        public void SetStoryLock(bool Lock)
         {
             dialogueLock = Lock;
         }
@@ -49,7 +51,7 @@ namespace Gaza
         
         
         // 演绎剧本
-        private void PlayDialogue()
+        private void PlayStory()
         {
             if (currentNode == null)
             {
@@ -141,6 +143,10 @@ namespace Gaza
                         {
                             DebugLog(connection.node as DebugNode);
                         }
+                        else if (connection.node.GetType() == typeof(LoadSceneNode))
+                        {
+                            LoadScene(connection.node as LoadSceneNode);
+                        }
                     }
 
                     switch (currentNode.GetValuesByField("nextType"))
@@ -228,15 +234,25 @@ namespace Gaza
                             }
                             else if (connection.node.GetType() == typeof(DialogueNode))
                             {
-                                //Debug.Log("点击分支" + index + "进入对话框节点");
                                 currentNode = connection.node;
                                 contentList.RemoveAt(0);
                                 UpdateDialogueUi(currentNode);
+                            }
+                            else if (connection.node.GetType() == typeof(BranchNode))
+                            {
+                                currentNode = connection.node;
+                                contentList.RemoveAt(0);
+                                UpdateDialogueUi(currentNode);
+                                AddBranchClick(currentNode as BranchNode);
                             }
                             else if (connection.node.GetType() == typeof(FlagNode))
                             {
                                 // 不写判断惹，反正接在选项后面的一定是end
                                 dialogueUi.SetActive(false);
+                            }
+                            else if (connection.node.GetType() == typeof(LoadSceneNode))
+                            {
+                                LoadScene(connection.node as LoadSceneNode);
                             }
                         }
                         
@@ -264,17 +280,49 @@ namespace Gaza
         // VoiceNode逻辑处理
         private void PlayVoice(VoiceNode node)
         {
-            if (node.mode == VoiceNode.VoiceModeType.BK)
+            if (node.voiceManagerType == VoiceNode.VoiceManagerType.Play)
             {
-                VoiceManager.instance.PlayBKMusic(node.filename);   
+                if (node.mode == VoiceNode.VoiceModeType.BK)
+                {
+                    VoiceManager.instance.PlayBKMusic(node.filename);   
+                }
+                else if (node.mode == VoiceNode.VoiceModeType.Sound)
+                {
+                    VoiceManager.instance.PlaySound(node.filename , false);   
+                }
+                else if (node.mode == VoiceNode.VoiceModeType.SoundLoop)
+                {
+                    VoiceManager.instance.PlaySound(node.filename , true);   
+                }
             }
-            else if (node.mode == VoiceNode.VoiceModeType.Sound)
+            else if (node.voiceManagerType == VoiceNode.VoiceManagerType.Value)
             {
-                VoiceManager.instance.PlaySound(node.filename , false);   
+                if (node.valueType == VoiceNode.ValueModeType.BK)
+                {
+                    VoiceManager.instance.ChangeBKValue(node.value);
+                }
+                else if (node.valueType == VoiceNode.ValueModeType.Sound)
+                {
+                    VoiceManager.instance.ChangeSoundValue(node.value);
+                }
             }
-            else if (node.mode == VoiceNode.VoiceModeType.SoundLoop)
+            else if (node.voiceManagerType == VoiceNode.VoiceManagerType.Pause)
             {
-                VoiceManager.instance.PlaySound(node.filename , true);   
+                if (node.PauseType == VoiceNode.PauseModeType.BK)
+                {
+                    VoiceManager.instance.PauseBKMusic();
+                }
+            }
+            else if (node.voiceManagerType == VoiceNode.VoiceManagerType.Stop)
+            {
+                if (node.StopType == VoiceNode.StopModeType.BK)
+                {
+                    VoiceManager.instance.StopBKMusic();
+                }
+                else if (node.StopType == VoiceNode.StopModeType.Sound)
+                {
+                    VoiceManager.instance.StopSound(node.source);
+                }
             }
 
         }
@@ -300,7 +348,11 @@ namespace Gaza
         // DelaytimeNode逻辑处理
         private void DelayTime(DelayTimeNode delaytimeNode)
         {
-            Thread.Sleep(delaytimeNode.time);
+            //Thread.Sleep(delaytimeNode.time);
+            Invoke("DelayFunc",delaytimeNode.time);
+        }
+        private void DelayFunc()
+        {
             foreach (var connection in currentNode.GetOutputPort("trigger").GetConnections())
             {
                 if (connection.node.GetType() == typeof(EventNode))
@@ -319,6 +371,10 @@ namespace Gaza
                 else if (connection.node.GetType() == typeof(DebugNode))
                 {
                     DebugLog(connection.node as DebugNode);
+                }
+                else if (connection.node.GetType() == typeof(LoadSceneNode))
+                {
+                    LoadScene(connection.node as LoadSceneNode);
                 }
                 
             }
@@ -351,8 +407,21 @@ namespace Gaza
             }
         }
 
+        // LoadSceneNode逻辑处理
+        private void LoadScene(LoadSceneNode node)
+        {
+            if (!node.asyn)
+            {
+                SceneManager.instance.LoadScene(node.scene);
+            }
+            else if (node.asyn)
+            {
+                SceneManager.instance.LoadSceneAsyn(node.scene);
+            }
+            
+        }
 
-        
+
     }
 
 }
