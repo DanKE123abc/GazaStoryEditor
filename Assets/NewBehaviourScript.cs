@@ -15,16 +15,17 @@ namespace NewBehaviourScript
 
 	public class NewBehaviourScript : MonoBehaviour
 	{
+		private GazaStoryManager storyManager;
     	void Start()
     	{
-	        
-    	}
+	        storyManager = GetComponent<GazaStoryManager>();
+	        storyManager.StartPlay();
+        }
 
     	void Update()
     	{
 	        if (Input.GetKeyDown(KeyCode.Space))
 	        {
-		        GazaStoryManager storyManager = GetComponent<GazaStoryManager>();
 		        storyManager.Play();
 	        }
     	}

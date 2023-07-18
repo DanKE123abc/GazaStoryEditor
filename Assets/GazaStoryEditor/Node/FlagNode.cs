@@ -36,7 +36,7 @@ namespace Gaza
             {
                 if (from.ValueType != to.node.GetType())
                 {
-                    Debug.LogError("Flag节点 禁止连接" + to.node.GetType() + "节点");
+                    Debug.LogError("Gaza：Flag节点 禁止连接" + to.node.GetType() + "节点");
                     GetPort(from.fieldName).Disconnect(to);
                 }
             }
@@ -44,7 +44,7 @@ namespace Gaza
             {
                 if (from.ValueType != to.node.GetType())
                 {
-                    Debug.LogWarning("不建议您在Flag节点 后连接Delaytime节点");
+                    Debug.LogWarning("Gaza：不建议您在Flag节点 后连接Delaytime节点");
                 }
             }
         }

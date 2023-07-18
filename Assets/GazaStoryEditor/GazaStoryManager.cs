@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Threading;
 using Dewity;
 using Sirenix.OdinInspector;
-using UnityEngine.SceneManagement;
 using XNode;
 using SceneManager = Dewity.SceneManager;
 
@@ -17,16 +15,17 @@ namespace Gaza
         
         [LabelText("对话框UI")]public GameObject dialogueUi;
         [LabelText("故事剧本")]public GazaStoryGraph storyGraph;
-
-        private bool dialogueLock;
-        private Text content;
-        private Text speaker;
-        private Image head;
-
-        private Node currentNode;
-        private List<string> contentList = new List<string>();
-        private List<Button> branchBtns = new List<Button>();
         [LabelText("选项按钮预制体")]public GameObject branchPb;
+
+        private bool _dialogueLock;
+        private Text _content;
+        private Text _name;
+        private Image _head;
+
+        private Node _currentNode;
+        private List<string> _contentList = new List<string>();
+        private List<Button> _branchBtns = new List<Button>();
+        
 
         
         /// <summary>
@@ -34,7 +33,7 @@ namespace Gaza
         /// </summary>
         public void Play()
         {
-            if (!dialogueLock)
+            if (!_dialogueLock)
             {
                 PlayStory();
             }
@@ -42,10 +41,28 @@ namespace Gaza
 
         /// <summary>
         /// 故事锁
+        /// 上锁状态时无法使用Play函数
         /// </summary>
         public void SetStoryLock(bool Lock)
         {
-            dialogueLock = Lock;
+            _dialogueLock = Lock;
+        }
+
+        /// <summary>
+        /// 开始演绎
+        /// </summary>
+        public void StartPlay()
+        {
+            if (_currentNode == null)
+            {
+                dialogueUi.SetActive(true);
+                _currentNode = storyGraph.nodes[0].GetOutputPort("next").Connection.node;
+                UpdateDialogueUi(_currentNode);
+            }
+            else
+            {
+                Debug.Log("Gaza：演绎已开始");
+            }
         }
         
         
@@ -53,36 +70,33 @@ namespace Gaza
         // 演绎剧本
         private void PlayStory()
         {
-            if (currentNode == null)
+            if (_currentNode == null)
             {
-                dialogueUi.SetActive(true);
-                currentNode = storyGraph.nodes[0].GetOutputPort("next").Connection.node;
-                //Debug.Log(currentNode);
-                UpdateDialogueUi(currentNode);
+                Debug.Log("Gaza：剧本未开始演绎");
             }
-            else if (currentNode.GetType() == typeof(DialogueNode))
+            else if (_currentNode.GetType() == typeof(DialogueNode))
             {
                 //第一个节点是DialogueNode
                 ShowContent();
             }
-            else if (currentNode.GetType() == typeof(BranchNode))
+            else if (_currentNode.GetType() == typeof(BranchNode))
             {
                 //第一个节点是BranchNode
-                AddBranchClick(currentNode as BranchNode);
+                AddBranchClick(_currentNode as BranchNode);
             }
-            else if (currentNode.GetType() == typeof(DelayTimeNode))
+            else if (_currentNode.GetType() == typeof(DelayTimeNode))
             {
                 //第一个节点是DelaytimeNode
-                DelayTime(currentNode as DelayTimeNode);
+                DelayTime(_currentNode as DelayTimeNode);
             }
         }
 
         // 生命周期
         private void Awake()
         {
-            content = dialogueUi.transform.Find("Content").GetComponent<Text>();
-            speaker = dialogueUi.transform.Find("Name").GetComponent<Text>();
-            head = dialogueUi.transform.Find("Head").GetComponent<Image>();
+            _content = dialogueUi.transform.Find("Content").GetComponent<Text>();
+            _name = dialogueUi.transform.Find("Name").GetComponent<Text>();
+            _head = dialogueUi.transform.Find("Head").GetComponent<Image>();
         }
         private void Start()
         {
@@ -98,10 +112,10 @@ namespace Gaza
                 if (node != null)
                 {
                     // 添加对话内容到列表
-                    contentList.AddRange(node.contents);
-                    content.text = contentList[0];
-                    speaker.text = node.speaker;
-                    head.sprite = node.head;
+                    _contentList.AddRange(node.contents);
+                    _content.text = _contentList[0];
+                    _name.text = node.speaker;
+                    _head.sprite = node.head;
                 }
             }
             else if (current.GetType() == typeof(BranchNode))
@@ -109,9 +123,9 @@ namespace Gaza
                 var branchNode = current as BranchNode;
                 if (branchNode != null)
                 {
-                    contentList.Add(branchNode.question);
-                    speaker.text = branchNode.speaker;
-                    head.sprite = branchNode.head;
+                    _contentList.Add(branchNode.question);
+                    _name.text = branchNode.speaker;
+                    _head.sprite = branchNode.head;
                 }
             }
         }
@@ -119,12 +133,12 @@ namespace Gaza
         // Dialogue逻辑处理
         private void ShowContent()
         {
-            if (contentList.Count > 0)
+            if (_contentList.Count > 0)
             {
-                contentList.RemoveAt(0);
-                if (contentList.Count == 0)
+                _contentList.RemoveAt(0);
+                if (_contentList.Count == 0)
                 {
-                    foreach (var connection in currentNode.GetOutputPort("trigger").GetConnections())
+                    foreach (var connection in _currentNode.GetOutputPort("trigger").GetConnections())
                     {
                         if (connection.node.GetType() == typeof(EventNode))
                         {
@@ -147,44 +161,48 @@ namespace Gaza
                         {
                             LoadScene(connection.node as LoadSceneNode);
                         }
+                        else if (connection.node.GetType() == typeof(OpenURLNode))
+                        {
+                            OpenURL(connection.node as OpenURLNode);
+                        }
                     }
 
-                    switch (currentNode.GetValuesByField("nextType"))
+                    switch (_currentNode.GetValuesByField("nextType"))
                     {
                         case DialogueNode.NextType.Dialogue:
-                            currentNode = currentNode.GetNodeByField("nextDialogue");
-                            var node = currentNode as DialogueNode;
+                            _currentNode = _currentNode.GetNodeByField("nextDialogue");
+                            var node = _currentNode as DialogueNode;
                             if (node != null)
                             {
-                                contentList.AddRange(node.contents);
-                                speaker.text = node.speaker;
-                                head.sprite = node.head;
+                                _contentList.AddRange(node.contents);
+                                _name.text = node.speaker;
+                                _head.sprite = node.head;
                             }
                             break;
                         case DialogueNode.NextType.Branch:
-                            currentNode = currentNode.GetNodeByField("nextBranch");
-                            UpdateDialogueUi(currentNode);
-                            AddBranchClick(currentNode as BranchNode);
+                            _currentNode = _currentNode.GetNodeByField("nextBranch");
+                            UpdateDialogueUi(_currentNode);
+                            AddBranchClick(_currentNode as BranchNode);
                             break;
                         case DialogueNode.NextType.Flag:
-                            currentNode = currentNode.GetNodeByField("nextFlag");
-                            FlagNode flagNode = currentNode as FlagNode;
+                            _currentNode = _currentNode.GetNodeByField("nextFlag");
+                            FlagNode flagNode = _currentNode as FlagNode;
                             if (flagNode != null && flagNode.flagType == FlagNode.FlagNodeType.End)
                             {
                                 dialogueUi.SetActive(false);
                             }
                             break;
                         case DialogueNode.NextType.DelayTime:
-                            currentNode = currentNode.GetNodeByField("nextDelaytime");
-                            DelayTime(currentNode as DelayTimeNode);
+                            _currentNode = _currentNode.GetNodeByField("nextDelaytime");
+                            DelayTime(_currentNode as DelayTimeNode);
                             break;
                     }
                 }
 
                 // 显示下一段对话内容
-                if (contentList.Count > 0)
+                if (_contentList.Count > 0)
                 {
-                    content.text = contentList[0];
+                    _content.text = _contentList[0];
                 }
             }
         }
@@ -192,13 +210,13 @@ namespace Gaza
         // BrannchNode逻辑处理
         private void AddBranchClick(BranchNode node)
         {
-            dialogueLock = true;
+            _dialogueLock = true;
             for (int i = 0; i < node.branchs.Count; i++)
             {
                 var branchPort = node.GetOutputPort("branchs " + i);
                 var text = node.branchs[i];
                 var btn = Instantiate(branchPb, dialogueUi.transform.Find("Select").transform, false).GetComponent<Button>();
-                branchBtns.Add(btn);
+                _branchBtns.Add(btn);
                 btn.GetComponentInChildren<Text>().text = text;
 
                 if (branchPort.IsConnected)
@@ -208,7 +226,7 @@ namespace Gaza
                     {
                         foreach (var connection in branchPort.GetConnections())
                         {
-                            dialogueLock = false;   
+                            _dialogueLock = false;   
                             if (connection.node.GetType() == typeof(EventNode))
                             {
                                 TriggerEvent(connection.node as EventNode);
@@ -228,22 +246,22 @@ namespace Gaza
                             }
                             else if (connection.node.GetType() == typeof(DelayTimeNode))
                             {
-                                currentNode = connection.node;
-                                contentList.RemoveAt(0);
+                                _currentNode = connection.node;
+                                _contentList.RemoveAt(0);
                                 DelayTime(connection.node as DelayTimeNode);
                             }
                             else if (connection.node.GetType() == typeof(DialogueNode))
                             {
-                                currentNode = connection.node;
-                                contentList.RemoveAt(0);
-                                UpdateDialogueUi(currentNode);
+                                _currentNode = connection.node;
+                                _contentList.RemoveAt(0);
+                                UpdateDialogueUi(_currentNode);
                             }
                             else if (connection.node.GetType() == typeof(BranchNode))
                             {
-                                currentNode = connection.node;
-                                contentList.RemoveAt(0);
-                                UpdateDialogueUi(currentNode);
-                                AddBranchClick(currentNode as BranchNode);
+                                _currentNode = connection.node;
+                                _contentList.RemoveAt(0);
+                                UpdateDialogueUi(_currentNode);
+                                AddBranchClick(_currentNode as BranchNode);
                             }
                             else if (connection.node.GetType() == typeof(FlagNode))
                             {
@@ -254,15 +272,19 @@ namespace Gaza
                             {
                                 LoadScene(connection.node as LoadSceneNode);
                             }
+                            else if (connection.node.GetType() == typeof(OpenURLNode))
+                            {
+                                OpenURL(connection.node as OpenURLNode);
+                            }
                         }
                         
                         // 清除所有按钮
-                        foreach (var btn in branchBtns)
+                        foreach (var btn in _branchBtns)
                         {
                             Destroy(btn.gameObject);
                         }
 
-                        branchBtns.Clear();
+                        _branchBtns.Clear();
                     });
 
                 }
@@ -353,7 +375,7 @@ namespace Gaza
         }
         private void DelayFunc()
         {
-            foreach (var connection in currentNode.GetOutputPort("trigger").GetConnections())
+            foreach (var connection in _currentNode.GetOutputPort("trigger").GetConnections())
             {
                 if (connection.node.GetType() == typeof(EventNode))
                 {
@@ -376,29 +398,32 @@ namespace Gaza
                 {
                     LoadScene(connection.node as LoadSceneNode);
                 }
-                
+                else if (connection.node.GetType() == typeof(OpenURLNode))
+                {
+                    OpenURL(connection.node as OpenURLNode);
+                }
             }
-            switch (currentNode.GetValuesByField("nextType"))
+            switch (_currentNode.GetValuesByField("nextType"))
             {
                 case DelayTimeNode.NextType.Dialogue:
-                    currentNode = currentNode.GetNodeByField("nextDialogue");
-                    var node = currentNode as DialogueNode;
+                    _currentNode = _currentNode.GetNodeByField("nextDialogue");
+                    var node = _currentNode as DialogueNode;
                     if (node != null)
                     {
-                        contentList.AddRange(node.contents);
-                        speaker.text = node.speaker;
-                        head.sprite = node.head;
+                        _contentList.AddRange(node.contents);
+                        _name.text = node.speaker;
+                        _head.sprite = node.head;
                     }
 
                     break;
                 case DelayTimeNode.NextType.Branch:
-                    currentNode = currentNode.GetNodeByField("nextBranch");
-                    UpdateDialogueUi(currentNode);
-                    AddBranchClick(currentNode as BranchNode);
+                    _currentNode = _currentNode.GetNodeByField("nextBranch");
+                    UpdateDialogueUi(_currentNode);
+                    AddBranchClick(_currentNode as BranchNode);
                     break;
                 case DelayTimeNode.NextType.Flag:
-                    currentNode = currentNode.GetNodeByField("nextFlag");
-                    FlagNode flagNode = currentNode as FlagNode;
+                    _currentNode = _currentNode.GetNodeByField("nextFlag");
+                    FlagNode flagNode = _currentNode as FlagNode;
                     if (flagNode != null && flagNode.flagType == FlagNode.FlagNodeType.End)
                     {
                         dialogueUi.SetActive(false);
@@ -420,8 +445,13 @@ namespace Gaza
             }
             
         }
-
-
+        
+        // OpenURLNode逻辑处理
+        private void OpenURL(OpenURLNode node)
+        {
+            Application.OpenURL(node.url);
+        }
+        
     }
 
 }

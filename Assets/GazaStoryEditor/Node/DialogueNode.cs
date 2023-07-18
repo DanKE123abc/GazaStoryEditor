@@ -83,7 +83,7 @@ namespace Gaza
 
 					if (from.ValueType != to.node.GetType())
 					{
-						Debug.LogError(from.ValueType + "节点 与" + to.node.GetType() + "节点 不匹配");
+						Debug.LogError("Gaza："+from.ValueType + "节点 与" + to.node.GetType() + "节点 不匹配");
 						GetPort(from.fieldName).Disconnect(to);
 					}
 
