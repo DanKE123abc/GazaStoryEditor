@@ -9,6 +9,9 @@ using SceneManager = Dewity.SceneManager;
 namespace Gaza
 {
 
+    /// <summary>
+    /// GazaStoryManager
+    /// </summary>
     [AddComponentMenu("GazaStoryEditor/StoryManager")]
     public class GazaStoryManager : MonoBehaviour
     {

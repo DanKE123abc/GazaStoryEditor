@@ -453,8 +453,8 @@ MonoBehaviour:
   speaker: Gaza
   head: {fileID: 21300000, guid: 4338a205155d0734aa961de38e719365, type: 3}
   contents:
-  - "Gaza\u5267\u672C\u7F16\u8F91\u5668\u76EE\u524D\u67099\u79CD\u8282\u70B9"
-  - "\u5206\u522B\u6709\uFF1AFlag\\Branch\\Dialogue\\Event\\Debug\\Voice\\DelayTime\\SetActive\\LoadScene"
+  - "Gaza\u5267\u672C\u7F16\u8F91\u5668\u76EE\u524D\u670910\u79CD\u8282\u70B9"
+  - "\u5206\u522B\u6709\uFF1AFlag\\Branch\\Dialogue\\Event\\Debug\\Voice\\DelayTime\\SetActive\\LoadScene\\OpenURL"
   - "Flag\u662F\u4E00\u4E2A\u5267\u672C\u7684\u5F00\u59CB\u548C\u7ED3\u675F\u7684\u8282\u70B9"
   - "Branch\u662F\u7ED9\u73A9\u5BB6\u9009\u9879\u7684\u8282\u70B9"
   - "Dialogue\u662F\u4E00\u4E2A\u4EBA\u7269\u8BF4\u8BDD\u7684\u8282\u70B9\uFF0C\u652F\u6301\u591A\u53E5\u5BF9\u8BDD"
@@ -464,6 +464,7 @@ MonoBehaviour:
   - "DelayTime\u662F\u5EF6\u65F6\u8282\u70B9\uFF0C\u4F7F\u6267\u884C\u6682\u505C\u4E00\u6BB5\u65F6\u95F4"
   - "SetActive\u662FUnity\u65B9\u6CD5\u5F15\u51FA\uFF0C\u7528\u4E8E\u63A7\u5236\u5BF9\u8BDDUI\u663E\u793A"
   - "LoadScene\u7528\u4E8E\u52A0\u8F7D\u573A\u666F\uFF0C\u652F\u6301\u5F02\u6B65"
+  - "OpenURL\u4F1A\u8C03\u7528\u7CFB\u7EDF\u6D4F\u89C8\u5668\u6253\u5F00\u7F51\u9875\u94FE\u63A5"
   pre: 
   nextType: 0
   nextDialogue: {fileID: 0}
