@@ -1,10 +1,11 @@
 using System.Linq;
 using Gaza.BaseStoryNode;
+using Gaza.Story;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Root
 {
 
     [NodeTint(0,128,0)]

@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Gaza.BaseStoryNode;
+using Gaza.Root;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Story
 {
 	[NodeTint(153, 153, 0)]
 	public class DelayTimeNode : Node

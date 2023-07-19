@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Gaza.BaseStoryNode;
+using Gaza.Root;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;
 using Node = XNode.Node;
 
-namespace Gaza
+namespace Gaza.Story
 {
 	[NodeTint(0,0,128)]
 	public class DialogueNode : Node

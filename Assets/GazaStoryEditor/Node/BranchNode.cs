@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Story
 {
     [NodeTint(102, 0, 153)]
     public class BranchNode : Node

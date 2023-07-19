@@ -24,9 +24,17 @@ namespace Gaza
 		
 		public override string GetNodeMenuName(System.Type type)
 		{
-			if (type.Namespace == "Gaza")
+			if (type.Namespace == "Gaza.Root")
 			{
-				return base.GetNodeMenuName(type).Replace("Gaza/", "剧本节点/");
+				return base.GetNodeMenuName(type).Replace("Gaza/Root/", "根节点/");
+			}
+			else if (type.Namespace == "Gaza.Story")
+			{
+				return base.GetNodeMenuName(type).Replace("Gaza/Story/", "故事节点/");
+			}
+			else if (type.Namespace == "Gaza.Event")
+			{
+				return base.GetNodeMenuName(type).Replace("Gaza/Event/", "事件节点/");
 			}
 			else return null;
 		}

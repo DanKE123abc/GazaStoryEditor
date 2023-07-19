@@ -3,7 +3,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Event
 {
     [Node.NodeTintAttribute(255,140,0)]
     public class VoiceNode : BasicNode

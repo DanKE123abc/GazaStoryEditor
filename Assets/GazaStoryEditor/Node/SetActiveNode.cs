@@ -2,7 +2,7 @@ using Gaza.BaseStoryNode;
 using Sirenix.OdinInspector;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Event
 {
     [NodeTint(0, 139, 139)]
     public class SetActiveNode : BasicNode

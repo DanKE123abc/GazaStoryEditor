@@ -2,7 +2,7 @@ using Gaza.BaseStoryNode;
 using Sirenix.OdinInspector;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Event
 {
     [NodeTint(142,0,140)]
     public class OpenURLNode : BasicNode

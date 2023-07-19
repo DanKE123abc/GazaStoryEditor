@@ -2,7 +2,7 @@ using Gaza.BaseStoryNode;
 using Sirenix.OdinInspector;
 using XNode;
 
-namespace Gaza
+namespace Gaza.Event
 {
 
     [Node.NodeTintAttribute(139, 0, 0)]

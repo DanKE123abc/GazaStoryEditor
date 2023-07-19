@@ -1,7 +1,7 @@
 using Gaza.BaseStoryNode;
 using Sirenix.OdinInspector;
 
-namespace Gaza
+namespace Gaza.Event
 {
     [NodeTint(61,30,52)]
     public class LoadSceneNode : BasicNode
