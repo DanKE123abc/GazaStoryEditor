@@ -1,3 +1,4 @@
+using SceneManager = Dewity.SceneManager;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -7,7 +8,10 @@ using Gaza.Root;
 using Gaza.Story;
 using Sirenix.OdinInspector;
 using XNode;
-using SceneManager = Dewity.SceneManager;
+/// -----------------设置Text-----------------
+using Text = TMPro.TextMeshProUGUI;
+// using Text = UnityEngine.UI.Text;
+/// -----------------------------------------
 
 namespace Gaza
 {
@@ -103,9 +107,6 @@ namespace Gaza
             _content = dialogueUi.transform.Find("Content").GetComponent<Text>();
             _name = dialogueUi.transform.Find("Name").GetComponent<Text>();
             _head = dialogueUi.transform.Find("Head").GetComponent<Image>();
-        }
-        private void Start()
-        {
             dialogueUi.SetActive(false);
         }
 
