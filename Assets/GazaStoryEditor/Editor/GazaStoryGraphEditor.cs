@@ -21,6 +21,16 @@ namespace Gaza
 			GUILayout.Label("故事图纸", style);
 			GUILayout.EndVertical();
 		}
+		
+		public override string GetNodeMenuName(System.Type type)
+		{
+			if (type.Namespace == "Gaza")
+			{
+				return base.GetNodeMenuName(type).Replace("Gaza/", "剧本节点/");
+			}
+			else return null;
+		}
+		
 	}
 
 }

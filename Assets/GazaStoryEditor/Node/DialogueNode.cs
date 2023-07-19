@@ -11,7 +11,7 @@ namespace Gaza
 	[NodeTint(0,0,128)]
 	public class DialogueNode : Node
 	{
-		[LabelText("名字")] public string speaker;
+		[LabelText("名字")] public string thename;
 
 		[PreviewField(Alignment = ObjectFieldAlignment.Left), LabelText("头像")]
 		public Sprite head;

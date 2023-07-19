@@ -20,7 +20,7 @@ namespace Gaza
         [LabelText("故事剧本")]public GazaStoryGraph storyGraph;
         [LabelText("选项按钮预制体")]public GameObject branchPb;
 
-        private bool _dialogueLock;
+        private bool _playLock;
         private Text _content;
         private Text _name;
         private Image _head;
@@ -36,7 +36,7 @@ namespace Gaza
         /// </summary>
         public void Play()
         {
-            if (!_dialogueLock)
+            if (!_playLock)
             {
                 PlayStory();
             }
@@ -48,7 +48,7 @@ namespace Gaza
         /// </summary>
         public void SetStoryLock(bool Lock)
         {
-            _dialogueLock = Lock;
+            _playLock = Lock;
         }
 
         /// <summary>
@@ -116,8 +116,8 @@ namespace Gaza
                 {
                     // 添加对话内容到列表
                     _contentList.AddRange(node.contents);
+                    _name.text = node.thename;
                     _content.text = _contentList[0];
-                    _name.text = node.speaker;
                     _head.sprite = node.head;
                 }
             }
@@ -127,7 +127,8 @@ namespace Gaza
                 if (branchNode != null)
                 {
                     _contentList.Add(branchNode.question);
-                    _name.text = branchNode.speaker;
+                    _name.text = branchNode.thename;
+                    _content.text = _contentList[0];
                     _head.sprite = branchNode.head;
                 }
             }
@@ -178,7 +179,7 @@ namespace Gaza
                             if (node != null)
                             {
                                 _contentList.AddRange(node.contents);
-                                _name.text = node.speaker;
+                                _name.text = node.thename;
                                 _head.sprite = node.head;
                             }
                             break;
@@ -213,7 +214,7 @@ namespace Gaza
         // BrannchNode逻辑处理
         private void AddBranchClick(BranchNode node)
         {
-            _dialogueLock = true;
+            _playLock = true;
             for (int i = 0; i < node.branchs.Count; i++)
             {
                 var branchPort = node.GetOutputPort("branchs " + i);
@@ -229,7 +230,7 @@ namespace Gaza
                     {
                         foreach (var connection in branchPort.GetConnections())
                         {
-                            _dialogueLock = false;   
+                            _playLock = false;   
                             if (connection.node.GetType() == typeof(EventNode))
                             {
                                 TriggerEvent(connection.node as EventNode);
@@ -250,7 +251,6 @@ namespace Gaza
                             else if (connection.node.GetType() == typeof(DelayTimeNode))
                             {
                                 _currentNode = connection.node;
-                                _contentList.RemoveAt(0);
                                 DelayTime(connection.node as DelayTimeNode);
                             }
                             else if (connection.node.GetType() == typeof(DialogueNode))
@@ -414,7 +414,7 @@ namespace Gaza
                     if (node != null)
                     {
                         _contentList.AddRange(node.contents);
-                        _name.text = node.speaker;
+                        _name.text = node.thename;
                         _head.sprite = node.head;
                     }
 

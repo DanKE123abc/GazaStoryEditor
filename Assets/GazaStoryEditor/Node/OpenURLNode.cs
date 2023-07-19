@@ -8,7 +8,7 @@ namespace Gaza
     public class OpenURLNode : BasicNode
     {
         [LabelText("网页链接")] public string url;
-
+        
         public override object GetValue(NodePort port)
         {
             return null; // Replace this

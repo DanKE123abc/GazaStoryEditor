@@ -8,7 +8,7 @@ namespace Gaza
     [NodeTint(102, 0, 153)]
     public class BranchNode : Node
     {
-        [LabelText("名字")] public string speaker;
+        [LabelText("名字")] public string thename;
 
         [PreviewField(Alignment = ObjectFieldAlignment.Left), LabelText("头像")]
         public Sprite head;
