@@ -8,7 +8,7 @@
 
 **Tips："Gaza"取自粤语“曱甴”，意思是蟑螂**
 
-![所有Node](https://images.dkdk.eu.org/Node.png)
+![所有Node](https://images.dkdk.eu.org/GazaStoryEditor/Node.png)
 
 ### 介绍
 
